@@ -1,0 +1,49 @@
+﻿@page "/products"
+@inject BlazorCRUDApp.Data.IProductService ProductService;
+
+<h3> List of Products</h3>
+
+<br/>
+<a href="product/0">Add Employee</a>
+<table class="table">
+    <thead>
+        <tr>
+            <td>Id: </td>
+            <td>Name: </td>
+            <td> </td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var product in products)
+        {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.Name</td>
+                <td class="">
+                    <a href="product/@product.Id">
+                        Edit 
+                    </a>
+
+                </td>
+                <td>
+                    <button class="btn btn-danger" @onclick = "@(e=> OnDelete(product.Id))"> Delete </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<BlazorCRUDApp.Data.Product> products;
+
+    protected override void OnInitialized()
+    {
+        products = ProductService.GetProducts();
+    }
+
+    private void OnDelete(Guid id)
+    {
+        ProductService.DeleteProduct(id);
+    }
+}

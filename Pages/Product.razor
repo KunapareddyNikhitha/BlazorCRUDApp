@@ -1,0 +1,49 @@
+﻿@page "/product/{id}"
+@inject BlazorCRUDApp.Data.IProductService ProductService
+@inject NavigationManager Navigation
+<h1>Edit Product</h1>
+
+<EditForm Model="product" OnSubmit="@SubmitForm">
+    <div class="form-group">
+        <label>Id: </label>
+        <input id="id" class="form-control" name="id" value="@product.Id" readonly/>
+    </div>
+    <br>
+    <div class="form-group">
+        <label>Name: </label>
+        <InputText id="name" class="form-control" name="name" @bind-Value="product.Name" />
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Update</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public string Id{ get; set; }
+
+    private BlazorCRUDApp.Data.Product product { get; set; }
+    protected override void OnInitialized()
+    {
+        if(!string.IsNullOrEmpty(Id) && Id == "0")
+        {
+            product = new Data.Product();
+        }
+        else
+        {
+            product = ProductService.GetProduct(Guid.Parse(Id));
+        }
+    }
+    private void SubmitForm()
+    {
+        if(product.Id == Guid.Empty)
+        {
+            ProductService.AddProduct(product);
+            Navigation.NavigateTo("products");
+        }
+        else
+        {
+            ProductService.UpdateProduct(product);
+            Navigation.NavigateTo("products");
+        }
+    }
+}
